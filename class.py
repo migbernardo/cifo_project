@@ -1,10 +1,13 @@
 import numpy as np
 import random
+from fitness import get_fitness
+from selection import fps
 
 
 class Solutions:
     def __init__(self, item, num_solutions):
         self.item = item
+        self.num_solutions = num_solutions
         self.rep = np.array(item)
         # break puzzle into each respective sub-grid from left to right and top to bottom
         # create a matrix representation of the flat sub-grids
@@ -45,7 +48,7 @@ class Solutions:
 
         # generate a set of solutions
         self.solutions = []
-        for n_sol in range(num_solutions):
+        for n_sol in range(self.num_solutions):
             sol = self.subgrids.copy()
             # sample list of numbers to select for each sub-grid
             self.sel_num = []
@@ -57,6 +60,21 @@ class Solutions:
                 for i, index in enumerate(self.not_fixed_index[row]):
                     sol[row][index] = self.sel_num[row][i]
             self.solutions.append(sol)
+
+    def evolve(self, num_generations, selection, elitism):
+        for gen in range(num_generations):
+            new_sol = []
+            fitness = []
+            for sol in self.solutions:
+                fitness.append(get_fitness(sol))
+
+            if elitism:
+                elite = self.solutions[fitness.index(max(fitness))]
+
+        #while len(new_sol) < self.num_solutions:
+        if selection == 'fps':
+            p1, p2 = fps(self.solutions, fitness), fps(self.solutions, fitness)
+        return print(p1, p2, sep='\n\n')
 
 
 if __name__ == '__main__':
@@ -70,4 +88,6 @@ if __name__ == '__main__':
         [0, 0, 0, 4, 0, 2, 7, 8, 0],
         [0, 0, 5, 0, 8, 9, 0, 0, 0],
         [2, 0, 0, 0, 0, 7, 1, 0, 0]
-    ], num_solutions=5)
+    ], num_solutions=4)
+
+    puzzle.evolve(num_generations=1, elitism=False, selection='fps')
