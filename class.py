@@ -1,7 +1,8 @@
 import numpy as np
-import random
+from random import sample, random
 from fitness import get_fitness
 from selection import fps, tournament, ranking
+from cycle_co import shuffle, cycle_co
 
 
 class Solutions:
@@ -53,7 +54,7 @@ class Solutions:
             # sample list of numbers to select for each sub-grid
             self.sel_num = []
             for numbers in self.num_to_sel:
-                self.sel_num.append(random.sample(numbers, k=len(numbers)))
+                self.sel_num.append(sample(numbers, k=len(numbers)))
 
             # replaced non-fixed positions with selected numbers (generate a solution)
             for row in range(sol.shape[0]):
@@ -61,9 +62,9 @@ class Solutions:
                     sol[row][index] = self.sel_num[row][i]
             self.solutions.append(sol)
 
-    def evolve(self, num_generations, selection, elitism, t_size=None):
+    def evolve(self, num_generations, selection, elitism, crossover, co_p, mutation, mu_p, t_size=None):
         if self.num_solutions % 2 != 0:
-            print('Give num_solutions an even input value')
+            print('input even num_solutions')
         else:
             for gen in range(num_generations):
                 new_sol = []
@@ -73,21 +74,60 @@ class Solutions:
                         fitness.append(get_fitness(sol))
                     elite = self.solutions[fitness.index(max(fitness))]
 
-            # while len(new_sol) < self.num_solutions:
-            if selection == 'fps':
-                p1, p2 = fps(self.solutions), fps(self.solutions)
-            elif selection == 'tournament':
-                if t_size is None:
-                    print('t_size input value missing')
-                elif t_size > self.num_solutions:
-                    print('set t_size <= num_solutions')
+            while len(new_sol) < self.num_solutions:
+                # selection
+                if selection == 'fps':
+                    p1, p2 = fps(self.solutions), fps(self.solutions)
+                elif selection == 'tournament':
+                    if t_size is None:
+                        print('t_size input value missing')
+                        break
+                    elif t_size > self.num_solutions:
+                        print('set t_size <= num_solutions')
+                        break
+                    else:
+                        p1, p2 = tournament(self.solutions, t_size), tournament(self.solutions, t_size)
+                elif selection == 'ranking':
+                    p1, p2 = ranking(self.solutions), ranking(self.solutions)
                 else:
-                    p1, p2 = tournament(self.solutions, t_size), tournament(self.solutions, t_size)
-            elif selection == 'ranking':
-                p1, p2 = ranking(self.solutions), ranking(self.solutions)
-                return print(p1, p2, sep='\n\n')
-            else:
-                print("input a valid selection method: 'fps', 'tournament', 'ranking'")
+                    print("input a valid selection method: 'fps', 'tournament', 'ranking'")
+                    break
+
+                # crossover
+                if random() < co_p:
+                    if crossover == 'cycle_co':
+                        s_p1, s_p2 = shuffle(p1, self.not_fixed_index), shuffle(p2, self.not_fixed_index)
+                        c1, c2 = cycle_co(s_p1, s_p2)[0], cycle_co(s_p1, s_p2)[1]
+                    elif crossover == 'p_mapped_co':
+                        pass
+                    else:
+                        print("input a valid crossover method: 'cycle_co', 'p_mapped_co'")
+                        break
+                # create a copy of the parents if crossover doesn't happen (reproduction)
+                else:
+                    c1, c2 = p1, p2
+
+                # mutation
+                if random() < mu_p:
+                    if mutation == 'swap':
+                        c1 = ...
+                    elif mutation == 'to be defined':
+                        c1 = ...
+                    else:
+                        print("input a valid mutation method: 'swap', 'to be defined'")
+                        break
+                if random() < mu_p:
+                    if mutation == 'swap':
+                        c2 = ...
+                    elif mutation == 'to be defined':
+                        c2 = ...
+                    else:
+                        print("input a valid mutation method: 'swap', 'to be defined'")
+                        break
+
+                new_sol.append(c1)
+                if len(new_sol) < self.num_solutions:
+                    new_sol.append(c2)
 
 
 if __name__ == '__main__':
