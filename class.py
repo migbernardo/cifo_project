@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from fitness import get_fitness
-from selection import fps
+from selection import fps, tournament, ranking
 
 
 class Solutions:
@@ -61,20 +61,33 @@ class Solutions:
                     sol[row][index] = self.sel_num[row][i]
             self.solutions.append(sol)
 
-    def evolve(self, num_generations, selection, elitism):
-        for gen in range(num_generations):
-            new_sol = []
-            fitness = []
-            for sol in self.solutions:
-                fitness.append(get_fitness(sol))
+    def evolve(self, num_generations, selection, elitism, t_size=None):
+        if self.num_solutions % 2 != 0:
+            print('Give num_solutions an even input value')
+        else:
+            for gen in range(num_generations):
+                new_sol = []
+                if elitism:
+                    fitness = []
+                    for sol in self.solutions:
+                        fitness.append(get_fitness(sol))
+                    elite = self.solutions[fitness.index(max(fitness))]
 
-            if elitism:
-                elite = self.solutions[fitness.index(max(fitness))]
-
-        #while len(new_sol) < self.num_solutions:
-        if selection == 'fps':
-            p1, p2 = fps(self.solutions, fitness), fps(self.solutions, fitness)
-        return print(p1, p2, sep='\n\n')
+            # while len(new_sol) < self.num_solutions:
+            if selection == 'fps':
+                p1, p2 = fps(self.solutions), fps(self.solutions)
+            elif selection == 'tournament':
+                if t_size is None:
+                    print('t_size input value missing')
+                elif t_size > self.num_solutions:
+                    print('set t_size <= num_solutions')
+                else:
+                    p1, p2 = tournament(self.solutions, t_size), tournament(self.solutions, t_size)
+            elif selection == 'ranking':
+                p1, p2 = ranking(self.solutions), ranking(self.solutions)
+                return print(p1, p2, sep='\n\n')
+            else:
+                print("input a valid selection method: 'fps', 'tournament', 'ranking'")
 
 
 if __name__ == '__main__':
@@ -90,4 +103,4 @@ if __name__ == '__main__':
         [2, 0, 0, 0, 0, 7, 1, 0, 0]
     ], num_solutions=4)
 
-    puzzle.evolve(num_generations=1, elitism=False, selection='fps')
+    puzzle.evolve(num_generations=1, elitism=False, selection='ranking')

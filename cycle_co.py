@@ -17,8 +17,6 @@ def cycle_co(p1, p2):
 
     while None in c1:
         index = c1.index(None)
-        if index != 0:
-            p1, p2 = p2, p1
         val1 = p1[index]
         val2 = p2[index]
 
@@ -28,8 +26,12 @@ def cycle_co(p1, p2):
             val2 = p2[index]
             index = p1.index(val2)
 
-        c1[index] = p1[index]
-        c2[index] = p2[index]
+        for element in c1:
+            if element is None:
+                index = c1.index(None)
+                if c1[index] is None:
+                    c1[index] = p2[index]
+                    c2[index] = p1[index]
     return c1, c2
 
 
