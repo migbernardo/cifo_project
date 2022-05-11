@@ -2,7 +2,7 @@ import numpy as np
 from random import sample, random
 from fitness import get_fitness
 from selection import fps, tournament, ranking
-from cycle_co import shuffle, cycle_co
+from crossover import shuffle, cycle_co
 from mutation import swap_mutation, fitness_mutation
 
 
@@ -73,62 +73,79 @@ class Solutions:
                     fitness = []
                     for sol in self.solutions:
                         fitness.append(get_fitness(sol))
+                    # save best solution
                     elite = self.solutions[fitness.index(max(fitness))]
 
-            while len(new_sol) < self.num_solutions:
-                # selection
-                if selection == 'fps':
-                    p1, p2 = fps(self.solutions), fps(self.solutions)
-                elif selection == 'tournament':
-                    if t_size is None:
-                        print('t_size input value missing')
-                        break
-                    elif t_size > self.num_solutions:
-                        print('set t_size <= num_solutions')
-                        break
+                while len(new_sol) < self.num_solutions:
+                    # selection
+                    if selection == 'fps':
+                        p1, p2 = fps(self.solutions), fps(self.solutions)
+                    elif selection == 'tournament':
+                        if t_size is None:
+                            print('t_size input value missing')
+                            break
+                        elif t_size > self.num_solutions:
+                            print('set t_size <= num_solutions')
+                            break
+                        else:
+                            p1, p2 = tournament(self.solutions, t_size), tournament(self.solutions, t_size)
+                    elif selection == 'ranking':
+                        p1, p2 = ranking(self.solutions), ranking(self.solutions)
                     else:
-                        p1, p2 = tournament(self.solutions, t_size), tournament(self.solutions, t_size)
-                elif selection == 'ranking':
-                    p1, p2 = ranking(self.solutions), ranking(self.solutions)
-                else:
-                    print("input a valid selection method: 'fps', 'tournament', 'ranking'")
-                    break
-
-                # crossover
-                if random() < co_p:
-                    if crossover == 'cycle_co':
-                        s_p1, s_p2 = shuffle(p1, self.not_fixed_index), shuffle(p2, self.not_fixed_index)
-                        c1, c2 = cycle_co(s_p1, s_p2)[0], cycle_co(s_p1, s_p2)[1]
-                    elif crossover == 'p_mapped_co':
-                        pass
-                    else:
-                        print("input a valid crossover method: 'cycle_co', 'p_mapped_co'")
-                        break
-                # create a copy of the parents if crossover doesn't happen (reproduction)
-                else:
-                    c1, c2 = p1, p2
-
-                # mutation
-                if random() < mu_p:
-                    if mutation == 'swap':
-                        c1 = swap_mutation(c1, self.not_fixed_index)
-                    elif mutation == 'fitness_mutation':
-                        c1 = fitness_mutation(c1, self.not_fixed_index)
-                    else:
-                        print("input a valid mutation method: 'swap', 'to be defined'")
-                        break
-                if random() < mu_p:
-                    if mutation == 'swap':
-                        c2 = swap_mutation(c2, self.not_fixed_index)
-                    elif mutation == 'fitness_mutation':
-                        c2 = fitness_mutation(c2, self.not_fixed_index)
-                    else:
-                        print("input a valid mutation method: 'swap', 'fitness_mutation'")
+                        print("input a valid selection method: 'fps', 'tournament', 'ranking'")
                         break
 
-                new_sol.append(c1)
-                if len(new_sol) < self.num_solutions:
-                    new_sol.append(c2)
+                    # crossover
+                    if random() < co_p:
+                        if crossover == 'cycle_co':
+                            s_p1, s_p2 = shuffle(p1, self.not_fixed_index), shuffle(p2, self.not_fixed_index)
+                            c1 = cycle_co(s_p1, s_p2)[0]
+                            c2 = cycle_co(s_p1, s_p2)[1]
+                        elif crossover == 'p_mapped_co':
+                            pass
+                        else:
+                            print("input a valid crossover method: 'cycle_co', 'p_mapped_co'")
+                            break
+                    # create a copy of the parents if crossover doesn't happen (reproduction)
+                    else:
+                        c1, c2 = p1, p2
+
+                    # mutation
+                    if random() < mu_p:
+                        if mutation == 'swap':
+                            c1 = swap_mutation(c1, self.not_fixed_index)
+                        elif mutation == 'fitness_mutation':
+                            c1 = fitness_mutation(c1, self.not_fixed_index)
+                        else:
+                            print("input a valid mutation method: 'swap', 'to be defined'")
+                            break
+                    if random() < mu_p:
+                        if mutation == 'swap':
+                            c2 = swap_mutation(c2, self.not_fixed_index)
+                        elif mutation == 'fitness_mutation':
+                            c2 = fitness_mutation(c2, self.not_fixed_index)
+                        else:
+                            print("input a valid mutation method: 'swap', 'fitness_mutation'")
+                            break
+
+                    new_sol.append(c1)
+                    if len(new_sol) < self.num_solutions:
+                        new_sol.append(c2)
+
+                if elitism:
+                    new_sol_fitness = []
+                    for sol in new_sol:
+                        new_sol_fitness.append(get_fitness(sol))
+                    # replace the worst solution by elite
+                    worst = new_sol_fitness.index(min(new_sol_fitness))
+                    new_sol.pop(worst)
+                    new_sol.append(elite)
+
+                self.solutions = new_sol
+                current_fitness = []
+                for sol in new_sol:
+                    current_fitness.append(get_fitness(sol))
+                print(f'best individual of generation {gen+1}: {max(current_fitness)} fitness')
 
 
 if __name__ == '__main__':
@@ -142,6 +159,13 @@ if __name__ == '__main__':
         [0, 0, 0, 4, 0, 2, 7, 8, 0],
         [0, 0, 5, 0, 8, 9, 0, 0, 0],
         [2, 0, 0, 0, 0, 7, 1, 0, 0]
-    ], num_solutions=4)
+    ], num_solutions=150)
 
-    puzzle.evolve(num_generations=1, elitism=False, selection='ranking')
+    puzzle.evolve(num_generations=10000,
+                  elitism=True,
+                  selection='tournament',
+                  t_size=2,
+                  crossover='cycle_co',
+                  co_p=0.8,
+                  mutation='fitness_mutation',
+                  mu_p=0.05)
