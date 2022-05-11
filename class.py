@@ -3,6 +3,7 @@ from random import sample, random
 from fitness import get_fitness
 from selection import fps, tournament, ranking
 from cycle_co import shuffle, cycle_co
+from mutation import swap_mutation, fitness_mutation
 
 
 class Solutions:
@@ -110,19 +111,19 @@ class Solutions:
                 # mutation
                 if random() < mu_p:
                     if mutation == 'swap':
-                        c1 = ...
-                    elif mutation == 'to be defined':
-                        c1 = ...
+                        c1 = swap_mutation(c1, self.not_fixed_index)
+                    elif mutation == 'fitness_mutation':
+                        c1 = fitness_mutation(c1, self.not_fixed_index)
                     else:
                         print("input a valid mutation method: 'swap', 'to be defined'")
                         break
                 if random() < mu_p:
                     if mutation == 'swap':
-                        c2 = ...
-                    elif mutation == 'to be defined':
-                        c2 = ...
+                        c2 = swap_mutation(c2, self.not_fixed_index)
+                    elif mutation == 'fitness_mutation':
+                        c2 = fitness_mutation(c2, self.not_fixed_index)
                     else:
-                        print("input a valid mutation method: 'swap', 'to be defined'")
+                        print("input a valid mutation method: 'swap', 'fitness_mutation'")
                         break
 
                 new_sol.append(c1)
