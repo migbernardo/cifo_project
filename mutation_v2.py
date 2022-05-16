@@ -25,6 +25,15 @@ def swap(child, not_fixed_index):
     return c_list
 
 
+def n_swap(child, not_fixed_index, num_swap):
+    c_list = list(child)
+    for i in range(num_swap):
+        indexes_to_swap = choices(not_fixed_index, k=2)
+        c_list[indexes_to_swap[0]], c_list[indexes_to_swap[1]] = c_list[indexes_to_swap[1]], c_list[indexes_to_swap[0]]
+    c_list = np.array(c_list)
+    return c_list
+
+
 def rand_mut(child, not_fixed_index):
     chosen_mutation = choice(['opm', 'swap'])
     if chosen_mutation == 'opm':
