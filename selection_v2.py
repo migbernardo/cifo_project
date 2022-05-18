@@ -8,7 +8,7 @@ def tournament(solutions, t_size):
     fitness = []
     for sol in sol_subset:
         fitness.append(get_fitness(sol))
-    return sol_subset[fitness.index(max(fitness))]
+    return sol_subset[fitness.index(min(fitness))]
 
 
 def fps(solutions):

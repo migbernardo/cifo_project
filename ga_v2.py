@@ -1,11 +1,12 @@
 import numpy as np
+import csv
 from representation import get_rep, get_grid
 from random import randint, random
 from fitness_v2 import get_fitness
 from selection_v2 import tournament, fps, ranking
 from crossover_v2 import tpco, fitness_co
 from mutation_v2 import opm, npm, swap, rand_mut, n_swap
-from fitness_landscape import plot
+from fitness_landscape import plot, export_csv
 
 
 class Solver:
@@ -26,7 +27,7 @@ class Solver:
                 for index in self.not_fixed:
                     rep[index] = randint(1, 9)
                 self.pop.append(rep)
-            self.fitness = [0]
+            self.fitness = []
 
     def evolve(self,
                num_generations,
@@ -38,7 +39,6 @@ class Solver:
                n_mutations=None,
                num_swap=None,
                t_size=None,
-               shuffle=False,
                elitism=False):
         for gen in range(num_generations):
             new_pop = []
@@ -47,7 +47,7 @@ class Solver:
                 for sol in self.pop:
                     fitness.append(get_fitness(sol))
                 # save best solution
-                elite = self.pop[fitness.index(max(fitness))]
+                elite = self.pop[fitness.index(min(fitness))]
             while len(new_pop) < self.pop_size:
                 if selection == 'tournament':
                     p1 = tournament(self.pop, t_size)
@@ -60,8 +60,8 @@ class Solver:
                     p2 = ranking(self.pop)
                 if random() < co_p:
                     if crossover == 'tpco':
-                        c1 = tpco(p1, p2, self.not_fixed, shuffle)[0]
-                        c2 = tpco(p1, p2, self.not_fixed, shuffle)[1]
+                        c1 = tpco(p1, p2)[0]
+                        c2 = tpco(p1, p2)[1]
                     else:
                         c1 = fitness_co(p1, p2)[0]
                         c2 = fitness_co(p1, p2)[1]
@@ -100,7 +100,7 @@ class Solver:
                 for sol in new_pop:
                     new_sol_fitness.append(get_fitness(sol))
                 # replace the worst solution by elite
-                worst = new_sol_fitness.index(min(new_sol_fitness))
+                worst = new_sol_fitness.index(max(new_sol_fitness))
                 new_pop.pop(worst)
                 new_pop.append(elite)
 
@@ -108,27 +108,26 @@ class Solver:
             current_fitness = []
             for sol in new_pop:
                 current_fitness.append(get_fitness(sol))
-                if get_fitness(sol) == 243:
+                if get_fitness(sol) <= 4:
                     final_solution = sol
-            self.fitness.append(max(current_fitness))
-            print(f'best individual of generation {gen + 1}: {max(current_fitness)} fitness')
-            if max(current_fitness) == 243:
-                print(get_grid(final_solution))
-                break
+            self.fitness.append(min(current_fitness))
+            print(f'best individual of generation {gen + 1}: {min(current_fitness)} fitness')
         print(plot(num_generations, self.fitness))
+        print(get_grid(final_solution))
+        export_csv(self.fitness, 'run10')
 
 
 if __name__ == '__main__':
     puzzle = Solver(item=[
-        [8, 0, 2, 0, 0, 3, 5, 1, 0],
-        [0, 6, 0, 0, 9, 1, 0, 0, 3],
-        [7, 0, 1, 0, 0, 0, 8, 9, 4],
-        [6, 0, 8, 0, 0, 4, 0, 2, 1],
-        [0, 0, 0, 2, 5, 8, 0, 6, 0],
-        [9, 2, 0, 3, 1, 0, 4, 0, 0],
-        [0, 0, 0, 4, 0, 2, 7, 8, 0],
-        [0, 0, 5, 0, 8, 9, 0, 0, 0],
-        [2, 0, 0, 0, 0, 7, 1, 0, 0]
+        [5, 0, 0, 1, 0, 0, 7, 0, 0],
+        [0, 2, 0, 0, 0, 7, 1, 0, 0],
+        [3, 0, 1, 4, 0, 0, 8, 5, 2],
+        [6, 1, 0, 5, 7, 2, 4, 0, 8],
+        [0, 0, 2, 9, 6, 0, 0, 0, 0],
+        [0, 4, 0, 0, 3, 0, 6, 2, 7],
+        [4, 5, 9, 0, 8, 0, 0, 7, 0],
+        [1, 3, 0, 0, 0, 0, 9, 8, 6],
+        [2, 0, 0, 0, 1, 0, 0, 4, 3]
     ], pop_size=1000)
 
     puzzle.evolve(num_generations=100,
@@ -137,7 +136,5 @@ if __name__ == '__main__':
                   co_p=0.9,
                   mutation='swap',
                   mu_p=0.9,
-                  num_swap=1,
                   t_size=4,
-                  shuffle=False,
                   elitism=False)
