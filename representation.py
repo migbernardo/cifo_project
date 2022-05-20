@@ -16,6 +16,21 @@ def get_rep(arr):
     return rep
 
 
+def get_rep2(arr):
+    rep = np.stack([
+        arr[:3, :3].flatten(),
+        arr[:3, 3:6].flatten(),
+        arr[:3, 6:].flatten(),
+        arr[3:6, :3].flatten(),
+        arr[3:6, 3:6].flatten(),
+        arr[3:6, 6:].flatten(),
+        arr[6:, :3].flatten(),
+        arr[6:, 3:6].flatten(),
+        arr[6:, 6:].flatten()
+    ], axis=0)
+    return rep
+
+
 def get_grid(arr):
     arr = arr.reshape(9, 9)
     grid = np.zeros([9, 9])

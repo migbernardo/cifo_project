@@ -1,5 +1,5 @@
 import numpy as np
-from random import choice, sample
+from random import choice
 from representation import get_rep
 from fitness_v2 import get_fitness
 
@@ -20,25 +20,33 @@ def tpco(p1, p2):
     return c1, c2
 
 
-def fitness_co(p1, p2):
-    avg_parent_fitness = (get_fitness(p1) + get_fitness(p2)) / 2
+def opco(p1, p2):
+    p1_list = list(p1)
+    p2_list = list(p2)
+    co_index = [9 * x for x in range(1, 9)]
+    p_co = choice(co_index)
+    c1 = p1_list[:p_co] + p2_list[p_co:]
+    c2 = p2_list[:p_co] + p1_list[p_co:]
+    c1 = np.array(c1)
+    c2 = np.array(c2)
+    return c1, c2
+
+
+def fitness_co(p1, p2, opt, iterations):
+    avg_parent_fitness = (get_fitness(p1, opt) + get_fitness(p2, opt)) / 2
     avg_child_fitness = 0
     n_iter = 0
-    while avg_child_fitness <= avg_parent_fitness and n_iter < 20:
+    while avg_child_fitness <= avg_parent_fitness and n_iter < iterations:
         avg_child_fitness = 0
-        c1 = list(p1)
-        c2 = list(p2)
-        start_index = [9 * x for x in range(0, 9)]
-        end_index = [9 * x - 1 for x in range(1, 10)]
-        p_start = choice(start_index)
-        p_end = choice(end_index)
-        while p_end - p_start <= 8:
-            p_start = choice(start_index)
-            p_end = choice(end_index)
-        c1[p_start:p_end + 1], c2[p_start:p_end + 1] = c2[p_start:p_end + 1], c1[p_start:p_end + 1]
+        p1_list = list(p1)
+        p2_list = list(p2)
+        co_index = [9 * x for x in range(1, 9)]
+        p_co = choice(co_index)
+        c1 = p1_list[:p_co] + p2_list[p_co:]
+        c2 = p2_list[:p_co] + p1_list[p_co:]
         c1 = np.array(c1)
         c2 = np.array(c2)
-        avg_child_fitness += (get_fitness(c1) + get_fitness(c2)) / 2
+        avg_child_fitness += (get_fitness(c1, opt) + get_fitness(c2, opt)) / 2
         n_iter += 1
     return c1, c2
 
