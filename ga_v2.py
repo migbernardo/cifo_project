@@ -70,6 +70,15 @@ class Solver:
         elif selection == 'tournament' and t_size is None:
             print('input t_size value')
 
+        elif crossover == 'fitness_co' and iterations is None:
+            print('input iterations value')
+
+        elif mutation == 'npm' and n_mutations is None:
+            print('input n_mutations value')
+
+        elif mutation == 'n_swap' and num_swap is None:
+            print('input num_swap value')
+
         elif export and file_name is None:
             print('input file_name')
 
@@ -77,7 +86,7 @@ class Solver:
             print('input even pop_size')
 
         else:
-            # iterate through the chosen number of generations
+            # iterate for the chosen number of generations
             for gen in range(num_generations):
                 new_pop = []
 
@@ -210,18 +219,20 @@ if __name__ == '__main__':
         [5, 0, 0, 0, 4, 0, 0, 0, 0],
         [1, 0, 0, 0, 0, 3, 9, 0, 0],
         [0, 4, 2, 0, 8, 9, 0, 0, 0]
-    ], pop_size=1000)
+    ], pop_size=100)
 
-    puzzle.evolve(num_generations=10,
+    puzzle.evolve(num_generations=100,
                   selection='tournament',
                   crossover='opco',
                   co_p=0.9,
                   mutation='swap',
                   mu_p=0.9,
-                  opt='max',
-                  t_size=4,
-                  elitism=True,
-                  global_optimum=243,
+                  opt='min',
+                  t_size=10,
+                  n_mutations=None,
+                  num_swap=None,
+                  elitism=False,
+                  global_optimum=0,
                   export=True,
-                  file_name='test',
+                  file_name='selection_test_tournament_opco_10',
                   fitness_type='sum')
