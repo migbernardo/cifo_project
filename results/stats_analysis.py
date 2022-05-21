@@ -103,7 +103,13 @@ if __name__ == '__main__':
     mutation_inner_swap['generation'] = mutation_inner_swap['generation'].apply(lambda x: x + 1)
     mutation_inner_swap['mutation'] = 'inner_swap'
 
-    df_mutation = pd.concat([mutation_2pm, mutation_3pm, mutation_swap, mutation_2swap, mutation_inner_swap])
+    mutation_rand_mut = group_merge('mutation_test_tournament_rand_mut')
+    mutation_rand_mut.reset_index(inplace=True)
+    mutation_rand_mut.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_rand_mut['generation'] = mutation_rand_mut['generation'].apply(lambda x: x + 1)
+    mutation_rand_mut['mutation'] = 'rand_mut'
+
+    df_mutation = pd.concat([mutation_2pm, mutation_3pm, mutation_swap, mutation_2swap, mutation_inner_swap,  mutation_rand_mut])
     df_mutation.sort_values(by='generation', inplace=True)
     df_mutation.reset_index(drop=True, inplace=True)
 
