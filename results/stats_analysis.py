@@ -39,7 +39,7 @@ if __name__ == '__main__':
     plt.title('Fitness Landscape')
     plt.xlabel('Generations')
     plt.xticks(range(0, 101, 10))
-    plt.ylabel('Average Best Fitness')
+    plt.ylabel('Best Fitness')
     plt.yticks(range(0, 101, 10))
     plt.show()
 
@@ -62,8 +62,134 @@ if __name__ == '__main__':
     plt.title('Fitness Landscape')
     plt.xlabel('Generations')
     plt.xticks(range(0, 101, 10))
-    plt.ylabel('Average Best Fitness')
-    plt.yticks(range(0, 71, 10))
+    plt.ylabel('Best Fitness')
+    plt.yticks(range(0, 66, 5))
     plt.show()
 
     # MUTATION COMPARISON PLOT
+    mutation_2pm = group_merge('mutation_test_tournament_2pm')
+    mutation_2pm.reset_index(inplace=True)
+    mutation_2pm.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_2pm['generation'] = mutation_2pm['generation'].apply(lambda x: x + 1)
+    mutation_2pm['mutation'] = '2pm'
+
+    mutation_3pm = group_merge('mutation_test_tournament_3pm')
+    mutation_3pm.reset_index(inplace=True)
+    mutation_3pm.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_3pm['generation'] = mutation_3pm['generation'].apply(lambda x: x + 1)
+    mutation_3pm['mutation'] = '3pm'
+
+    mutation_swap = group_merge('mutation_test_tournament_swap')
+    mutation_swap.reset_index(inplace=True)
+    mutation_swap.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_swap['generation'] = mutation_swap['generation'].apply(lambda x: x + 1)
+    mutation_swap['mutation'] = 'swap'
+
+    mutation_2swap = group_merge('mutation_test_tournament_2swap')
+    mutation_2swap.reset_index(inplace=True)
+    mutation_2swap.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_2swap['generation'] = mutation_2swap['generation'].apply(lambda x: x + 1)
+    mutation_2swap['mutation'] = '2swap'
+
+    mutation_inner_swap = group_merge('mutation_test_tournament_inner_swap')
+    mutation_inner_swap.reset_index(inplace=True)
+    mutation_inner_swap.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    mutation_inner_swap['generation'] = mutation_inner_swap['generation'].apply(lambda x: x + 1)
+    mutation_inner_swap['mutation'] = 'inner_swap'
+
+    df_mutation = pd.concat([mutation_2pm, mutation_3pm, mutation_swap, mutation_2swap, mutation_inner_swap])
+    df_mutation.sort_values(by='generation', inplace=True)
+    df_mutation.reset_index(drop=True, inplace=True)
+
+    sns.lineplot(x='generation', y='fitness', hue='mutation', palette='viridis', data=df_mutation)
+    plt.title('Fitness Landscape')
+    plt.xlabel('Generations')
+    plt.xticks(range(0, 101, 10))
+    plt.ylabel('Best Fitness')
+    plt.yticks(range(0, 66, 5))
+    plt.show()
+
+    # EASY PUZZLE COMPARISON PLOT
+    easy_opco = group_merge('easy_test_opco')
+    easy_opco.reset_index(inplace=True)
+    easy_opco.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    easy_opco['generation'] = easy_opco['generation'].apply(lambda x: x + 1)
+    easy_opco['mutation'] = 'opco'
+
+    easy_tpco = group_merge('easy_test_tpco')
+    easy_tpco.reset_index(inplace=True)
+    easy_tpco.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    easy_tpco['generation'] = easy_tpco['generation'].apply(lambda x: x + 1)
+    easy_tpco['mutation'] = 'tpco'
+
+    df_easy = pd.concat([easy_opco, easy_tpco])
+    df_easy.sort_values(by='generation', inplace=True)
+    df_easy.reset_index(drop=True, inplace=True)
+    df_easy['fitness'] = df_easy['fitness'].apply(lambda x: str(x).split(';;;;')[0]).astype('int')
+
+    sns.lineplot(x='generation', y='fitness', hue='mutation', palette='viridis', data=df_easy)
+    plt.title('Fitness Landscape')
+    plt.xlabel('Generations')
+    plt.xticks(range(0, 101, 10))
+    plt.ylabel('Best Fitness')
+    plt.yticks(range(0, 51, 5))
+    plt.axhline(y=0.0, color='black', linestyle='dotted')
+    plt.show()
+
+    # VERY HARD PUZZLE PLOTS
+    # fitness crossover
+    very_hard_opco = group_merge('very_hard_test_opco')
+    very_hard_opco.reset_index(inplace=True)
+    very_hard_opco.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    very_hard_opco['generation'] = very_hard_opco['generation'].apply(lambda x: x + 1)
+    very_hard_opco['crossover'] = 'opco'
+    df_very_hard_opco = very_hard_opco.copy()
+    df_very_hard_opco.sort_values(by='generation', inplace=True)
+    df_very_hard_opco.reset_index(drop=True, inplace=True)
+
+    sns.lineplot(x='generation', y='fitness', palette='viridis', data=df_very_hard_opco)
+    plt.title('Fitness Landscape')
+    plt.xlabel('Generations')
+    plt.xticks(range(0, 201, 20))
+    plt.ylabel('Best Fitness')
+    plt.yticks(range(0, 61, 5))
+    plt.axhline(y=15.0, color='black', linestyle='dotted')
+    plt.show()
+
+    # average fitness function
+    very_hard_avg = group_merge('very_hard_test_opco_avg')
+    very_hard_avg.reset_index(inplace=True)
+    very_hard_avg.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    very_hard_avg['generation'] = very_hard_avg['generation'].apply(lambda x: x + 1)
+    very_hard_avg['function'] = 'avg'
+    df_very_hard_avg = very_hard_avg.copy()
+    df_very_hard_avg.sort_values(by='generation', inplace=True)
+    df_very_hard_avg.reset_index(drop=True, inplace=True)
+
+    sns.lineplot(x='generation', y='fitness', palette='viridis', data=df_very_hard_avg)
+    plt.title('Fitness Landscape')
+    plt.xlabel('Generations')
+    plt.xticks(range(0, 201, 20))
+    plt.ylabel('Average Best Fitness')
+    plt.yticks(range(0, 21, 2))
+    plt.axhline(y=4.0, color='black', linestyle='dotted')
+    plt.show()
+
+    # final attempt
+    very_hard = group_merge('very_hard_test_opco_avg_500')
+    very_hard.reset_index(inplace=True)
+    very_hard.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    very_hard['generation'] = very_hard['generation'].apply(lambda x: x + 1)
+    very_hard['function'] = 'avg'
+    df_very_hard = very_hard.copy()
+    df_very_hard.sort_values(by='generation', inplace=True)
+    df_very_hard.reset_index(drop=True, inplace=True)
+
+    sns.lineplot(x='generation', y='fitness', palette='viridis', data=df_very_hard)
+    plt.title('Fitness Landscape')
+    plt.xlabel('Generations')
+    plt.xticks(range(0, 501, 50))
+    plt.ylabel('Average Best Fitness')
+    plt.yticks(range(0, 21, 2))
+    plt.axhline(y=1.0, color='black', linestyle='dotted')
+    plt.show()
