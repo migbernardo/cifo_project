@@ -54,7 +54,13 @@ if __name__ == '__main__':
     crossover_tpco['selection'] = crossover_tpco['selection'].apply(lambda x: 'tpco')
     crossover_tpco.rename(columns={'selection': 'crossover'}, inplace=True)
 
-    df_crossover = pd.concat([crossover_opco, crossover_tpco])
+    crossover_f_co = group_merge('crossover_test_tournament_f_co')
+    crossover_f_co.reset_index(inplace=True)
+    crossover_f_co.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    crossover_f_co['generation'] = crossover_f_co['generation'].apply(lambda x: x + 1)
+    crossover_f_co['crossover'] = 'f_co'
+
+    df_crossover = pd.concat([crossover_opco, crossover_tpco, crossover_f_co])
     df_crossover.sort_values(by='generation', inplace=True)
     df_crossover.reset_index(drop=True, inplace=True)
 
@@ -114,20 +120,26 @@ if __name__ == '__main__':
     easy_opco.reset_index(inplace=True)
     easy_opco.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
     easy_opco['generation'] = easy_opco['generation'].apply(lambda x: x + 1)
-    easy_opco['mutation'] = 'opco'
+    easy_opco['crossover'] = 'opco'
 
     easy_tpco = group_merge('easy_test_tpco')
     easy_tpco.reset_index(inplace=True)
     easy_tpco.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
     easy_tpco['generation'] = easy_tpco['generation'].apply(lambda x: x + 1)
-    easy_tpco['mutation'] = 'tpco'
+    easy_tpco['crossover'] = 'tpco'
 
-    df_easy = pd.concat([easy_opco, easy_tpco])
+    easy_f_co = group_merge('easy_test_f_co')
+    easy_f_co.reset_index(inplace=True)
+    easy_f_co.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    easy_f_co['generation'] = easy_f_co['generation'].apply(lambda x: x + 1)
+    easy_f_co['crossover'] = 'f_co'
+
+    df_easy = pd.concat([easy_opco, easy_tpco, easy_f_co])
     df_easy.sort_values(by='generation', inplace=True)
     df_easy.reset_index(drop=True, inplace=True)
     df_easy['fitness'] = df_easy['fitness'].apply(lambda x: str(x).split(';;;;')[0]).astype('int')
 
-    sns.lineplot(x='generation', y='fitness', hue='mutation', palette='viridis', data=df_easy)
+    sns.lineplot(x='generation', y='fitness', hue='crossover', palette='viridis', data=df_easy)
     plt.title('Fitness Landscape')
     plt.xlabel('Generations')
     plt.xticks(range(0, 101, 10))
