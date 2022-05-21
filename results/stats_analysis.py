@@ -41,6 +41,7 @@ if __name__ == '__main__':
     plt.xticks(range(0, 101, 10))
     plt.ylabel('Best Fitness')
     plt.yticks(range(0, 101, 10))
+    plt.legend().set_title(None)
     plt.show()
 
     # CROSSOVER COMPARISON PLOT
@@ -70,6 +71,7 @@ if __name__ == '__main__':
     plt.xticks(range(0, 101, 10))
     plt.ylabel('Best Fitness')
     plt.yticks(range(0, 66, 5))
+    plt.legend().set_title(None)
     plt.show()
 
     # MUTATION COMPARISON PLOT
@@ -119,6 +121,7 @@ if __name__ == '__main__':
     plt.xticks(range(0, 101, 10))
     plt.ylabel('Best Fitness')
     plt.yticks(range(0, 66, 5))
+    plt.legend().set_title(None)
     plt.show()
 
     # EASY PUZZLE COMPARISON PLOT
@@ -140,7 +143,13 @@ if __name__ == '__main__':
     easy_f_co['generation'] = easy_f_co['generation'].apply(lambda x: x + 1)
     easy_f_co['crossover'] = 'f_co'
 
-    df_easy = pd.concat([easy_opco, easy_tpco, easy_f_co])
+    easy_opco_rand_mut = group_merge('easy_test_opco_rand_mut')
+    easy_opco_rand_mut.reset_index(inplace=True)
+    easy_opco_rand_mut.rename(columns={'index': 'generation', 0: 'fitness'}, inplace=True)
+    easy_opco_rand_mut['generation'] = easy_opco_rand_mut['generation'].apply(lambda x: x + 1)
+    easy_opco_rand_mut['crossover'] = 'opco + rand_mut'
+
+    df_easy = pd.concat([easy_opco, easy_tpco, easy_f_co, easy_opco_rand_mut])
     df_easy.sort_values(by='generation', inplace=True)
     df_easy.reset_index(drop=True, inplace=True)
     df_easy['fitness'] = df_easy['fitness'].apply(lambda x: str(x).split(';;;;')[0]).astype('int')
@@ -152,6 +161,7 @@ if __name__ == '__main__':
     plt.ylabel('Best Fitness')
     plt.yticks(range(0, 51, 5))
     plt.axhline(y=0.0, color='black', linestyle='dotted')
+    plt.legend().set_title(None)
     plt.show()
 
     # VERY HARD PUZZLE PLOTS
