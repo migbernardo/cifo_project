@@ -32,8 +32,8 @@ def opco(p1, p2):
     return c1, c2
 
 
-def fitness_co(p1, p2, opt, iterations):
-    avg_parent_fitness = (get_fitness(p1, opt) + get_fitness(p2, opt)) / 2
+def fitness_co(p1, p2, opt, iterations, fitness_type):
+    avg_parent_fitness = (get_fitness(p1, opt, fitness_type) + get_fitness(p2, opt, fitness_type)) / 2
     avg_child_fitness = 0
     n_iter = 0
     while avg_child_fitness <= avg_parent_fitness and n_iter < iterations:
@@ -46,7 +46,7 @@ def fitness_co(p1, p2, opt, iterations):
         c2 = p2_list[:p_co] + p1_list[p_co:]
         c1 = np.array(c1)
         c2 = np.array(c2)
-        avg_child_fitness += (get_fitness(c1, opt) + get_fitness(c2, opt)) / 2
+        avg_child_fitness += (get_fitness(c1, opt, fitness_type) + get_fitness(c2, opt, fitness_type)) / 2
         n_iter += 1
     return c1, c2
 

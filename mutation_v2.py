@@ -45,7 +45,7 @@ def n_swap(child, not_fixed_index, num_swap):
 
 def rand_mut(child, not_fixed_index, not_fixed_index_list):
     chosen_mutation = choice(['swap', 'inner_swap'])
-    if chosen_mutation == 'opm':
-        return opm(child, not_fixed_index)
+    if chosen_mutation == 'swap':
+        return swap(child, not_fixed_index)
     else:
         return inner_swap(child, not_fixed_index_list)

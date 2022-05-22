@@ -124,8 +124,8 @@ class Solver:
                             c1 = opco(p1, p2)[0]
                             c2 = opco(p1, p2)[1]
                         else:
-                            c1 = fitness_co(p1, p2, opt, iterations)[0]
-                            c2 = fitness_co(p1, p2, opt, iterations)[1]
+                            c1 = fitness_co(p1, p2, opt, iterations, fitness_type)[0]
+                            c2 = fitness_co(p1, p2, opt, iterations, fitness_type)[1]
                     # reproduce parents if mutation doesn't happen
                     else:
                         c1, c2 = p1, p2
@@ -199,9 +199,9 @@ class Solver:
             # plot fitness landscape after reaching the defined number of generations
             print(plot(num_generations, self.fitness, opt))
 
-            # print final solution if found
+            # print intial puzzle and final solution if found
             if self.final_solution is not None:
-                print(get_grid(self.final_solution))
+                print(get_grid(self.rep), get_grid(self.final_solution), sep='\n')
 
             # export data into csv file saved in the current directory
             if export:
@@ -210,29 +210,30 @@ class Solver:
 
 if __name__ == '__main__':
     puzzle = Solver(item=[
-        [0, 0, 0, 1, 5, 0, 6, 9, 0],
-        [0, 0, 1, 6, 0, 0, 0, 0, 7],
-        [0, 0, 0, 0, 2, 0, 0, 0, 4],
-        [8, 0, 0, 0, 0, 0, 3, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 8, 0],
-        [0, 9, 4, 0, 0, 0, 0, 0, 5],
-        [5, 0, 0, 0, 4, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 3, 9, 0, 0],
-        [0, 4, 2, 0, 8, 9, 0, 0, 0]
-    ], pop_size=100)
+        [5, 0, 0, 1, 0, 0, 7, 0, 0],
+        [0, 2, 0, 0, 0, 7, 1, 0, 0],
+        [3, 0, 1, 4, 0, 0, 8, 5, 2],
+        [6, 1, 0, 5, 7, 2, 4, 0, 8],
+        [0, 0, 2, 9, 6, 0, 0, 0, 0],
+        [0, 4, 0, 0, 3, 0, 6, 2, 7],
+        [4, 5, 9, 0, 8, 0, 0, 7, 0],
+        [1, 3, 0, 0, 0, 0, 9, 8, 6],
+        [2, 0, 0, 0, 1, 0, 0, 4, 3]
+    ], pop_size=1000)
 
     puzzle.evolve(num_generations=100,
                   selection='tournament',
                   crossover='opco',
                   co_p=0.9,
-                  mutation='swap',
+                  mutation='rand_mut',
                   mu_p=0.9,
                   opt='min',
-                  t_size=10,
+                  t_size=4,
                   n_mutations=None,
+                  iterations=None,
                   num_swap=None,
                   elitism=False,
                   global_optimum=0,
                   export=True,
-                  file_name='selection_test_tournament_opco_10',
+                  file_name='easy_test_opco_rand_mut_10',
                   fitness_type='sum')
