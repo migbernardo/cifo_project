@@ -4,29 +4,40 @@ Repository for storing the course project for the NOVA IMS master course Computa
 
 ### Description
 
-This project is about the development of a suduku puzzle solver using the Genetic Algorithm. 
+This project is about the development of a genetic algorithm implementation to solve sudoku puzzles for learning purposes.
 
 ### Repo's structure
 
 ```
 cifo_project
-|          ┌── raw <------- contains the raw images saved in their respective class directories
-|          |                after running the load.py script in src/data, which also creates 
-|          |                the data directory
-├── data ──┤
-|          └── processed <- contains the processed images after running the preprocessing.py 
-|                           script in src/data
-│
-|         ┌── data <------- contains all scripts related with data generation or transformation
-├── src ──┤
-|         └── model <------ contains all scripts related with model training and saving
-│
-├── requeriments.txt <----- list of all packages used in the project can be installed on the virtual 
-|                           environment with the terminal command: "pip install -r requirements.txt"
 |
-└── README.md <------------ info file
+├── content <-------------------------- contains the project's report
+|
+├── results <-------------------------- contains all .png fitness plots
+|
+|             ┌── stats_analysis.py <-- script that contains the generation of the stat analysis plots
+├── results ──┤
+|             └── 'name'.csv <--------- all raw fitness files
+|
+├── README.md <------------------------ info file
+|
+├── crossover_v2.py <------------------ script that contains the crossover algorithms
+|
+├── data.py <-------------------------- script that contains the chosen "easy" and "very hard" puzzles to solve
+|
+├── fitness_landscape.py <------------- script that contains the function which plots the fitness landscape
+|                                       and exports the values to .csv files
+|
+├── fitness_v2.py <-------------------- script that contains the fitness functions
+|
+├── ga_v2.py <------------------------- main script of the solver genetic algorithm
+|
+├── mutation_v2.py <------------------- script that contains the mutation algorithms
+|
+├── representation.py <---------------- script that contains all the representation functions
+|
+├── requeriments.txt <----------------- list of all packages used in the project can be installed on the virtual 
+|                                       environment with the terminal command: "pip install -r requirements.txt"
+|
+└── selection_v2.py <------------------ script that contains the selection algorithms
 ```
-
-### Useful links
-
-1. 
