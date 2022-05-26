@@ -3,7 +3,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def group_merge(group_name):
+def group_merge(group_name: str):
+    """
+    Merges all .csv under the same group name into a pd.DataFrame
+
+    :param group_name: group name of the files to be merged
+    :return: Returns a df with all fitness values of an experiment group
+    """
     files = []
     for i in range(10):
         f_name = group_name + f'_{i+1}.csv'

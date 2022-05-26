@@ -3,7 +3,16 @@ from scipy import stats
 from fitness_v2 import get_fitness
 
 
-def tournament(solutions, t_size, opt, fitness_type):
+def tournament(solutions: list, t_size: int, opt: str, fitness_type: str):
+    """
+    Tournament Selection
+
+    :param solutions: list of solutions in arr representation
+    :param t_size: tournament size
+    :param opt: type of optimization problem
+    :param fitness_type: type of fitness function
+    :return: Returns the best individual of a subset of solutions
+    """
     sol_subset = choices(solutions, k=t_size)
     fitness = []
     for sol in sol_subset:
@@ -14,7 +23,15 @@ def tournament(solutions, t_size, opt, fitness_type):
         return sol_subset[fitness.index(max(fitness))]
 
 
-def fps(solutions, opt, fitness_type):
+def fps(solutions: list, opt: str, fitness_type: str):
+    """
+    Fitness Proportionate Selection
+
+    :param solutions: list of solutions in arr representation
+    :param opt: type of optimization problem
+    :param fitness_type: type of fitness function
+    :return: Returns an individual according to its probability of being selected
+    """
     fitness = []
     for sol in solutions:
         fitness.append(get_fitness(sol, opt, fitness_type))
@@ -26,7 +43,15 @@ def fps(solutions, opt, fitness_type):
             return sol
 
 
-def ranking(solutions, opt, fitness_type):
+def ranking(solutions: list, opt: str, fitness_type: str):
+    """
+    Ranking Selection
+
+    :param solutions: list of solutions in arr representation
+    :param opt: type of optimization problem
+    :param fitness_type: type of fitness function
+    :return: Returns an individual according to its probability of being selected
+    """
     fitness = []
     for sol in solutions:
         fitness.append(get_fitness(sol, opt, fitness_type))

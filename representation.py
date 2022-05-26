@@ -1,7 +1,13 @@
 import numpy as np
 
 
-def get_rep(arr):
+def get_rep(arr: np.array):
+    """
+    Convert puzzle into GA's representation
+
+    :param arr: puzzle's 81 digits arr representation
+    :return: flat array representation of the puzzle
+    """
     rep = np.stack([
         arr[:3, :3].flatten(),
         arr[:3, 3:6].flatten(),
@@ -16,7 +22,13 @@ def get_rep(arr):
     return rep
 
 
-def get_rep2(arr):
+def get_rep2(arr: np.array):
+    """
+    Convert puzzle into GA's representation for Inner Swap Mutation
+
+    :param arr: puzzle's 81 digits arr representation
+    :return: non-flat array representation of the puzzle
+    """
     rep = np.stack([
         arr[:3, :3].flatten(),
         arr[:3, 3:6].flatten(),
@@ -31,7 +43,13 @@ def get_rep2(arr):
     return rep
 
 
-def get_grid(arr):
+def get_grid(arr: np.array):
+    """
+    Convert puzzle's array representation into original grid
+
+    :param arr: puzzle's 81 digits arr representation
+    :return: Original puzzle's grid
+    """
     arr = arr.reshape(9, 9)
     grid = np.zeros([9, 9])
     for i in range(3):
