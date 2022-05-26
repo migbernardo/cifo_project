@@ -4,7 +4,7 @@ Repository for storing the course project for the NOVA IMS master course Computa
 
 ### Description
 
-This project is about the development of a genetic algorithm implementation to solve sudoku puzzles for learning purposes.
+This project is about the development of a genetic algorithm implementation to solve sudoku puzzles.
 
 ### Repo's structure
 
